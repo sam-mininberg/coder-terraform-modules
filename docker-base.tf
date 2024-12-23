@@ -37,6 +37,7 @@ resource "coder_agent" "main" {
     # Prepare user home with default files on first start.
     if [ ! -f ~/.init_done ]; then
       cp -rT /etc/skel ~
+      mkdir /home/${local.username}/${data.coder_workspace.me.name}
       touch ~/.init_done
     fi
 
@@ -202,19 +203,27 @@ data "coder_parameter" "git_repo" {
   default      = "NULL"
 }
 
+data "coder_parameter" "git_branch"  {
+  name         = "git_branch"
+  display_name = "Git branch"
+  default      = ""
+}
+
 module "git-clone" {
-  count    = data.coder_parameter.git_repo.value == "NULL" ? 0 : 1
-  source   = "registry.coder.com/modules/git-clone/coder"
-  version  = "1.0.18"
-  agent_id = coder_agent.main.id
-  url      = data.coder_parameter.git_repo.value
+  count       = data.coder_parameter.git_repo.value == "NULL" ? 0 : 1
+  source      = "registry.coder.com/modules/git-clone/coder"
+  version     = "1.0.18"
+  agent_id    = coder_agent.main.id
+  branch_name = data.coder_parameter.git_branch.value
+  folder_name = data.coder_workspace.me.name
+  url         = data.coder_parameter.git_repo.value
 }
 
 module "jetbrains_gateway" {
   source         = "registry.coder.com/modules/jetbrains-gateway/coder"
   agent_id       = coder_agent.main.id
   agent_name     = "main"
-  folder         = "/home/admin"
+  folder         = "/home/${local.username}/${data.coder_workspace.me.name}"
   default        = "IU"
   latest         = true
 }
