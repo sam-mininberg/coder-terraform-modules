@@ -37,7 +37,7 @@ resource "coder_agent" "main" {
     # Prepare user home with default files on first start.
     if [ ! -f ~/.init_done ]; then
       cp -rT /etc/skel ~
-      mkdir /home/${local.username}/${data.coder_workspace.me.name}
+      sudo mkdir /home/${local.username}/${data.coder_workspace.me.name}
       touch ~/.init_done
     fi
 
