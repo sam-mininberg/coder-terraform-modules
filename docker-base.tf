@@ -37,7 +37,7 @@ resource "coder_agent" "main" {
     # Prepare user home with default files on first start.
     if [ ! -f ~/.init_done ]; then
       cp -rT /etc/skel ~
-      sudo mkdir /home/${local.username}/${data.coder_workspace.me.name}
+      mkdir ~/${data.coder_workspace.me.name}
       touch ~/.init_done
     fi
 
@@ -223,7 +223,7 @@ module "jetbrains_gateway" {
   source         = "registry.coder.com/modules/jetbrains-gateway/coder"
   agent_id       = coder_agent.main.id
   agent_name     = "main"
-  folder         = "/home/${local.username}/${data.coder_workspace.me.name}"
+  folder         = "/home/coder/${data.coder_workspace.me.name}"
   default        = "IU"
   latest         = true
 }
