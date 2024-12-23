@@ -195,3 +195,17 @@ resource "docker_container" "workspace" {
     value = "false"
   }
 }
+
+data "coder_parameter" "git_repo" {
+  name         = "git_repo"
+  display_name = "Git repository"
+  default      = "NULL"
+}
+
+module "git-clone" {
+  count    = data.coder_parameter.git_repo.value == "NULL" ? 0 : 1
+  source   = "registry.coder.com/modules/git-clone/coder"
+  version  = "1.0.18"
+  agent_id = coder_agent.main.id
+  url      = data.coder_parameter.git_repo.value
+}
