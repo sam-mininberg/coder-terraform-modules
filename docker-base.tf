@@ -209,3 +209,12 @@ module "git-clone" {
   agent_id = coder_agent.main.id
   url      = data.coder_parameter.git_repo.value
 }
+
+module "jetbrains_gateway" {
+  source         = "registry.coder.com/modules/jetbrains-gateway/coder"
+  agent_id       = coder_agent.main.id
+  agent_name     = "main"
+  folder         = "/home/admin"
+  default        = "IU"
+  latest         = true
+}
